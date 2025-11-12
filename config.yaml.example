@@ -1,0 +1,157 @@
+# EverydayAI CLI - Configuration File (YAML)
+#
+# This file provides a complete configuration example in YAML format.
+# Copy this to config.yaml and customize as needed.
+#
+# You can use this with: ei-cli --config config.yaml [command]
+#
+# Note: Environment variables override these values
+# See .env.example for environment variable format
+
+# ============================================================================
+# API Configuration
+# ============================================================================
+api:
+  # REQUIRED: Your OpenAI API key
+  openai_api_key: your-api-key-here
+  
+  # Optional: Additional API keys for other AI services
+  # browseruse_api_key: your-browseruse-api-key
+  # anthropic_api_key: your-anthropic-api-key
+  # google_api_key: your-google-api-key
+  # elevenlabs_api_key: your-elevenlabs-api-key
+  
+  # Optional: Custom API base URL (for proxies or alternative endpoints)
+  # openai_base_url: https://api.openai.com/v1
+  
+  # API request timeout in seconds
+  timeout_seconds: 600
+  
+  # Maximum retry attempts for failed API calls
+  max_retries: 3
+
+# ============================================================================
+# YouTube Configuration
+# ============================================================================
+youtube:
+  # Browser to extract cookies from (chrome, firefox, safari, edge)
+  # Uncomment to enable automatic cookie extraction
+  # cookies_browser: safari
+  
+  # Path to custom cookies file (Netscape format)
+  # cookies_file: ~/.ei_cli/youtube_cookies.txt
+  
+  # Max consecutive fragment failures before aborting download
+  max_fragment_failures: 10
+  
+  # Number of retry attempts for failed downloads
+  retry_attempts: 3
+  
+  # Download timeout in seconds
+  timeout_seconds: 300
+
+# ============================================================================
+# Transcription Configuration
+# ============================================================================
+transcription:
+  # Automatically chunk large audio files for API limits
+  auto_chunk: true
+  
+  # Maximum chunk size in MB (API limit is 25MB with multipart overhead)
+  max_chunk_size_mb: 20
+  
+  # Target chunk duration in seconds (10 minutes = 600 seconds)
+  chunk_duration_seconds: 600
+  
+  # ISO-639-1 language code for transcription (e.g., 'en', 'es', 'fr')
+  # Leave null for auto-detection
+  language: null
+  
+  # Keep intermediate chunk files after transcription
+  save_intermediate: false
+
+# ============================================================================
+# Text-to-Speech Configuration
+# ============================================================================
+tts:
+  # Voice selection
+  # Options: alloy, echo, fable, onyx, nova (recommended), shimmer
+  voice: nova
+  
+  # Model selection
+  # Options: tts-1 (faster, lower quality) or tts-1-hd (slower, better quality)
+  model: tts-1-hd
+  
+  # Playback speed multiplier (0.25 to 4.0)
+  speed: 1.0
+
+# ============================================================================
+# Workflow Configuration
+# ============================================================================
+workflow:
+  # Directory for workflow output files
+  output_dir: ./workflow_outputs
+  
+  # Save workflow state for resumability after failures
+  save_state: true
+  
+  # Enable parallel execution of independent tasks (experimental)
+  parallel_execution: false
+  
+  # Stop workflow on first error vs continue with warnings
+  fail_fast: true
+
+# ============================================================================
+# USAGE EXAMPLES
+# ============================================================================
+#
+# Basic usage with config file:
+#   ei-cli --config config.yaml transcribe-video https://youtube.com/watch?v=...
+#
+# Override specific values with environment variables:
+#   TTS__VOICE=echo ei-cli --config config.yaml speak "Hello world"
+#
+# Check your configuration:
+#   ei-cli --config config.yaml config show
+#
+# Export template configuration:
+#   ei-cli config export > my-config.yaml
+#
+# ============================================================================
+# VOICE CHARACTERISTICS
+# ============================================================================
+#
+# - alloy:   Neutral, balanced (good for general content)
+# - echo:    Male, clear (good for tutorials)
+# - fable:   British accent (good for storytelling)
+# - onyx:    Deep, authoritative (good for professional content)
+# - nova:    Female, warm (recommended for most content)
+# - shimmer: Upbeat, energetic (good for enthusiastic content)
+#
+# ============================================================================
+# WORKFLOW PRESETS
+# ============================================================================
+#
+# For different use cases, you might want different presets:
+#
+# Tutorial Videos:
+#   transcription:
+#     language: en
+#     auto_chunk: true
+#   tts:
+#     voice: nova
+#     model: tts-1-hd
+#     speed: 1.0
+#
+# Quick Tests:
+#   transcription:
+#     auto_chunk: false
+#   tts:
+#     model: tts-1  # Faster, lower quality
+#     speed: 1.2    # Slightly faster
+#
+# Non-English Content:
+#   transcription:
+#     language: es  # or fr, de, etc.
+#   tts:
+#     voice: alloy  # Most neutral for multiple languages

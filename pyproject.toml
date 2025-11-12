@@ -1,0 +1,296 @@
+[tool.poetry]
+name = "ei-cli"
+version = "0.1.0"
+description = "EverydayAI CLI - Personal AI toolkit for regular people"
+authors = ["Keith Williams <kaw393939@gmail.com>"]
+readme = "README.md"
+homepage = "https://keithwilliams.io"
+repository = "https://github.com/kaw393939/ei-cli"
+documentation = "https://github.com/kaw393939/ei-cli/blob/main/README.md"
+keywords = ["cli", "ai", "everydayai", "productivity", "automation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+packages = [{include = "ei_cli", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+click = "^8.1.7"
+pydantic = "^2.5.3"
+pydantic-settings = "^2.1.0"
+openai = "^2.7.0"
+pillow = "^12.0.0"
+numpy = "^2.3.4"
+backoff = "^2.2.1"
+httpx = "^0.28.0"
+yt-dlp = ">=2024.0.0"
+rich = "^13.7.0"
+elevenlabs = ">=1.0.0"
+aiolimiter = "^1.2.1"
+pyyaml = "^6.0"
+
+[tool.poetry.group.dev.dependencies]
+# Testing
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+pytest-asyncio = "^0.23.3"
+pytest-xdist = "^3.5.0"
+hypothesis = "^6.96.1"
+faker = "^22.0.0"
+
+# Quality
+ruff = "^0.1.9"
+mypy = "^1.8.0"
+bandit = {extras = ["toml"], version = "^1.7.6"}
+safety = "^3.0.1"
+radon = "^6.0.1"
+
+# Type stubs
+types-requests = "^2.31.0.20240106"
+
+# Dev tools
+ipython = "^8.20.0"
+pre-commit = "^3.6.0"
+
+[tool.poetry.scripts]
+ei = "ei_cli.cli.app:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# ============================================================================
+# RUFF CONFIGURATION (Linter + Formatter)
+# ============================================================================
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+indent-width = 4
+
+[tool.ruff.lint]
+# Enable rules
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "YTT",    # flake8-2020
+    "ASYNC",  # flake8-async
+    "S",      # flake8-bandit
+    "BLE",    # flake8-blind-except
+    "B",      # flake8-bugbear
+    "A",      # flake8-builtins
+    "COM",    # flake8-commas
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "T10",    # flake8-debugger
+    "EM",     # flake8-errmsg
+    "EXE",    # flake8-executable
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "G",      # flake8-logging-format
+    "PIE",    # flake8-pie
+    "T20",    # flake8-print
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SLF",    # flake8-self
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "TCH",    # flake8-type-checking
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "ERA",    # eradicate
+    "PD",     # pandas-vet
+    "PGH",    # pygrep-hooks
+    "PL",     # pylint
+    "TRY",    # tryceratops
+    "FLY",    # flynt
+    "PERF",   # perflint
+    "RUF",    # ruff-specific rules
+]
+
+# Ignore specific rules
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "S101",   # assert use (ok in tests)
+    "PLR0913", # too many arguments (sometimes necessary)
+    "TRY003", # long exception messages (we want detailed errors)
+    "BLE001", # blind exception catching (intentional for EAFP pattern)
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Exclude patterns
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests can use magic values, assertions, etc.
+"tests/**/*.py" = [
+    "S101",    # assert use
+    "PLR2004", # magic values
+    "ARG001",  # unused arguments (fixtures)
+    "TRY301",  # raise in try block (intentional for testing error handling)
+]
+# Error handling uses intentional broad exception catching for EAFP
+"src/ei_cli/core/errors.py" = [
+    "BLE001",  # blind exception catch (intentional for @handle_error decorator)
+]
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with spaces, not tabs
+indent-style = "space"
+
+# Trailing commas
+skip-magic-trailing-comma = false
+
+# Line endings
+line-ending = "auto"
+
+# ============================================================================
+# MYPY CONFIGURATION (Type Checking)
+# ============================================================================
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_unimported = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+check_untyped_defs = true
+strict_equality = true
+
+# Per-module options
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+# ============================================================================
+# PYTEST CONFIGURATION
+# ============================================================================
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests/python"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# Markers for categorizing tests
+markers = [
+    "unit: Unit tests (fast, isolated)",
+    "integration: Integration tests (slower, external deps)",
+    "e2e: End-to-end tests (slow, full scenarios)",
+    "property: Property-based tests (hypothesis)",
+    "slow: Slow tests (>1s)",
+    "ai: Tests requiring AI API (OpenAI)",
+    "git: Tests requiring git",
+    "asyncio: Async tests using asyncio",
+]
+
+# Output options
+addopts = [
+    "-v",                    # Verbose
+    "--strict-markers",      # Fail on unknown markers
+    "--tb=short",            # Short traceback format
+    "--color=yes",           # Colored output
+    "-ra",                   # Show all test results
+    "--cov=src/ei_cli",      # Coverage for source code
+    "--cov-branch",          # Branch coverage
+    "--cov-report=term-missing:skip-covered",  # Show missing lines
+    "--cov-report=html",     # HTML coverage report
+    "--cov-report=xml",      # XML coverage for CI
+    "--cov-fail-under=90",   # Fail if coverage < 90%
+]
+
+# Asyncio configuration
+asyncio_mode = "auto"
+
+# Parallel execution
+# addopts = ["-n", "auto"]  # Uncomment for parallel tests with pytest-xdist
+
+# ============================================================================
+# COVERAGE CONFIGURATION
+# ============================================================================
+[tool.coverage.run]
+source = ["src/ei_cli"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/__main__.py",
+    "*/conftest.py",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "@abstractmethod",
+    "@abc.abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+# ============================================================================
+# BANDIT CONFIGURATION (Security)
+# ============================================================================
+[tool.bandit]
+targets = ["src"]
+exclude_dirs = ["tests", "venv", ".venv"]
+skips = ["B101"]  # Allow assert in non-test code
+
+# ============================================================================
+# RADON CONFIGURATION (Code Complexity)
+# ============================================================================
+[tool.radon]
+cc_min = "C"  # Cyclomatic complexity threshold
+mi_min = 70   # Maintainability index threshold
