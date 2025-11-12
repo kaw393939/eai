@@ -7,37 +7,43 @@
 Created by Keith Williams - Director of Enterprise AI @ NJIT
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Code Coverage](https://img.shields.io/badge/coverage-25.35%25-orange.svg)](https://github.com/kaw393939/eai)
+[![Code Coverage](https://img.shields.io/badge/coverage-63.79%25-yellow.svg)](https://github.com/kaw393939/eai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status: Alpha](https://img.shields.io/badge/status-alpha-orange.svg)](https://github.com/kaw393939/eai)
+[![PyPI version](https://img.shields.io/pypi/v/everydayai-cli.svg)](https://pypi.org/project/everydayai-cli/)
 
 ## What is EverydayAI CLI?
 
-A command-line toolkit that makes AI-powered image processing and content
-analysis accessible to everyone - not just developers. Built for teachers,
-accountants, managers, small business owners, and anyone who wants to leverage
-AI without writing code.
+A command-line toolkit that makes AI-powered multimedia processing accessible to everyone - not just developers. Built for content creators, educators, podcasters, marketers, and anyone who wants to leverage AI without writing code.
+
+**v0.2.0 introduces a plugin architecture** making the CLI extensible and allowing third-party command additions.
 
 ## Features
 
 ### ✅ Currently Available
 
-- 🖼️ **Image Analysis**: AI-powered image understanding with GPT-4 Vision
-- ✂️ **Smart Cropping**: Intelligent image cropping with aspect ratio control
-- 🎨 **Background Removal**: Remove backgrounds from images automatically
-- 🔍 **AI Search**: Semantic search powered by AI
-- 📸 **Image Generation**: Create images with AI assistance
-- 🗣️ **Text-to-Speech**: Professional voice synthesis with 19 voices, 6 formats,
-  streaming support
+- 🖼️ **Image Generation**: Create images with DALL-E via gpt-image-1 model
+- 👁️ **Vision Analysis**: Single and multi-image analysis with GPT-5
+- 🗣️ **Text-to-Speech**: OpenAI TTS with 6 voices and ElevenLabs integration
+- �️ **Audio Transcription**: Whisper-powered transcription with preprocessing
+- 🌐 **Web Search**: AI-powered search with citations and sources
+- � **YouTube Processing**: Video download, transcription, and translation
+- � **Plugin Architecture**: Extensible command system with dynamic discovery
 - ⚙️ **Flexible Configuration**: YAML config + environment variables
 - 🎯 **Robust Error Handling**: Structured errors with helpful suggestions
 
+### 🚧 Removed in v0.2.0
+
+- ❌ **Smart Cropping**: Removed (didn't work reliably)
+- ❌ **Background Removal**: Removed (poor quality results)
+
 ### 🚧 Coming Soon (See [ROADMAP.md](ROADMAP.md))
 
-- 📦 Template System: Pre-built templates for common tasks
-- 🔄 Iteration Tracking: AI-assisted iterative workflows
-- � Deployment Tools: Easy deployment to various platforms
-- 🔌 Plugin Architecture: Extensible command system
+- 🤖 **OpenAI Agents SDK**: Multi-agent workflows and orchestration
+- 📦 **Plugin Marketplace**: Community-contributed commands
+- 🔄 **Workflow Chains**: Sequential tool orchestration
+- 🎨 **Enhanced Image Tools**: Better quality smart crop and background removal
+- � **Batch Processing**: Process multiple files efficiently
 
 ## Installation
 
@@ -58,97 +64,179 @@ eai --version
 
 ```bash
 # Analyze an image with AI
-eai vision analyze photo.jpg --prompt "Describe this image in detail"
+eai vision photo.jpg --prompt "Describe this image in detail"
 
-# Remove background from an image
-eai remove-bg input.jpg --output output.png
-
-# Smart crop with aspect ratio
-eai crop image.jpg --aspect-ratio 16:9 --output cropped.jpg
+# Analyze multiple images at once
+eai multi_vision image1.jpg image2.jpg image3.jpg --compare
 
 # Generate an image
-eai image generate "A serene mountain landscape" --output mountain.png
+eai image "A serene mountain landscape" -o mountain.png
 
-# AI-powered search (coming soon)
-eai search "machine learning tutorials"
+# AI-powered web search with citations
+eai search "latest developments in AI 2024"
 
 # Generate professional speech from text
 eai speak "Welcome to our presentation" -o welcome.mp3
 
-# Use premium voice with high quality
-eai speak "Important announcement" -o announce.mp3 -v marin -m tts-1-hd
+# Transcribe audio to text
+eai transcribe podcast.mp3
 
-# Stream long-form content with progress
-eai speak --input long_script.txt -o audiobook.mp3 --stream
+# Download and transcribe YouTube video
+eai transcribe_video "https://youtube.com/watch?v=..." -o transcript.txt
+
+# Use ElevenLabs for premium voices
+eai elevenlabs speak "Professional narration" -o narration.mp3 --voice adam
 ```
 
 ## Commands
 
-### `eai vision`
+### Core Commands
 
-Analyze images using AI vision models.
-
-```bash
-eai vision analyze IMAGE_PATH [OPTIONS]
-
-Options:
-  --prompt TEXT       What to analyze in the image
-  --model TEXT        AI model to use (default: gpt-4-vision)
-  --max-tokens INT    Maximum tokens for response
-  --detail TEXT       Detail level: low, high, auto (default: auto)
-```
-
-### `eai crop`
-
-Smart image cropping with AI assistance.
-
-```bash
-eai crop IMAGE_PATH [OPTIONS]
-
-Options:
-  --output PATH           Output file path
-  --aspect-ratio TEXT     Target aspect ratio (e.g., 16:9, 4:3)
-  --width INT            Target width in pixels
-  --height INT           Target height in pixels
-  --focus TEXT           Focus area: center, face, auto
-```
-
-### `eai remove-bg`
-
-Remove background from images.
-
-```bash
-eai remove-bg IMAGE_PATH [OPTIONS]
-
-Options:
-  --output PATH      Output file path
-  --format TEXT      Output format: png, jpg (default: png)
-```
+| Command | Description |
+|---------|-------------|
+| `eai image` | Generate images with DALL-E (gpt-image-1) |
+| `eai vision` | Analyze single images with GPT-5 |
+| `eai multi_vision` | Analyze multiple images simultaneously |
+| `eai speak` | Text-to-speech with OpenAI voices |
+| `eai transcribe` | Audio-to-text with Whisper |
+| `eai search` | Web search with AI-powered answers |
+| `eai youtube` | Manage YouTube authentication |
+| `eai transcribe_video` | Download and transcribe videos |
+| `eai translate_audio` | Translate audio to English |
+| `eai elevenlabs` | Premium TTS with ElevenLabs |
 
 ### `eai image`
 
-Generate or manipulate images with AI.
+Generate images using DALL-E.
 
 ```bash
-eai image generate PROMPT [OPTIONS]
+eai image PROMPT [OPTIONS]
 
 Options:
-  --output PATH      Output file path
-  --size TEXT        Image size: 256x256, 512x512, 1024x1024
-  --model TEXT       Model to use (default: dall-e-3)
+  -o, --output PATH          Output file path
+  -s, --size TEXT           Image size (256x256, 512x512, 1024x1024, 1024x1792, 1792x1024)
+  -q, --quality TEXT        Quality: standard, hd
+  --style TEXT              Style: vivid, natural
+  --json                    Output JSON format
+```
+
+### `eai vision`
+
+Analyze images using GPT-5 Vision.
+
+```bash
+eai vision IMAGE [OPTIONS]
+
+Options:
+  -p, --prompt TEXT         Question or instruction about the image
+  -m, --model TEXT          Model to use (default: gpt-5)
+  -d, --detail TEXT         Detail level: auto, low, high
+  -t, --max-tokens INT      Maximum tokens in response
+  --json                    Output as JSON
+```
+
+### `eai multi_vision`
+
+Analyze multiple images simultaneously.
+
+```bash
+eai multi_vision IMAGE1 IMAGE2 [IMAGE3] [OPTIONS]
+
+Options:
+  -p, --prompt TEXT         Analysis prompt for all images
+  -c, --compare             Enable detailed comparison mode
+  -d, --detail TEXT         Detail level: auto, low, high
+  --json                    Output as JSON
+```
+
+### `eai transcribe`
+
+Transcribe audio files to text.
+
+```bash
+eai transcribe AUDIO_FILE [OPTIONS]
+
+Options:
+  -f, --format TEXT         Output format: text, json, srt, vtt
+  -l, --language TEXT       Source language code (e.g., 'en', 'es')
+  -o, --output FILE         Save to file
+  --no-preprocess          Skip audio preprocessing
+  --parallel               Use parallel processing (3-5x faster)
+```
+
+### `eai transcribe_video`
+
+Download and transcribe videos.
+
+```bash
+eai transcribe_video URL [OPTIONS]
+
+Options:
+  -f, --format TEXT         Output format: text, json, srt, vtt
+  -l, --language TEXT       Source language hint
+  -o, --output FILE         Save transcript to file
+  --keep-audio             Keep downloaded audio file
+  --parallel               Use parallel processing
 ```
 
 ### `eai search`
 
-AI-powered semantic search (experimental).
+AI-powered web search with citations.
 
 ```bash
 eai search QUERY [OPTIONS]
 
 Options:
-  --limit INT       Number of results (default: 10)
-  --format TEXT     Output format: json, table (default: table)
+  -o, --output FILE         Save results to file
+  --json                    Output as JSON
+  -d, --domains TEXT        Limit to specific domains
+  --city TEXT              User location (city)
+  --country TEXT           User location (country)
 ```
+
+## Plugin Architecture
+
+**New in v0.2.0**: Commands are now implemented as plugins, making the CLI extensible.
+
+### Using Third-Party Plugins
+
+Install plugins via pip with the `eai.plugins` entry point:
+
+```bash
+pip install eai-plugin-example
+eai example-command  # Plugin commands auto-discovered
+```
+
+### Creating Plugins
+
+Create your own commands by implementing the `CommandPlugin` protocol:
+
+```python
+from ei_cli.plugins import CommandPlugin, BaseCommandPlugin
+import click
+
+class MyPlugin(BaseCommandPlugin):
+    name = "my-command"
+    category = "custom"
+    help_text = "My custom command"
+    
+    def get_command(self) -> click.Command:
+        @click.command(name=self.name, help=self.help_text)
+        def my_command():
+            click.echo("Hello from my plugin!")
+        return my_command
+
+plugin = MyPlugin()
+```
+
+Register via entry points in your `pyproject.toml`:
+
+```toml
+[project.entry-points."eai.plugins"]
+my-plugin = "my_package.plugin:plugin"
+```
+
+See plugin documentation for details on creating custom commands.
 
 ### `eai speak`
 
@@ -327,16 +415,31 @@ status and [ROADMAP.md](ROADMAP.md) for planned improvements.
 
 ## Testing Strategy
 
-Current test coverage: **25.35%** (Target: 90%)
+Current test coverage: **63.79%** (Target: 90%)
 
+**Test Results (v0.2.0):**
+- ✅ 559 tests passing
+- ⏭️ 41 tests skipped (image streaming not yet implemented)
 - ✅ Configuration system: 100% coverage
-- ✅ Error handling: 100% coverage
-- ✅ Tool registry: 100% coverage
-- 🚧 Tool implementations: 0% coverage (in progress)
-- 🚧 CLI commands: 0% coverage (in progress)
+- ✅ Error handling: High coverage
+- ✅ Plugin system: Validated via integration tests
+- ✅ All commands: Manually tested and working
 
-We're actively working toward 90% coverage. See
-[TECHNICAL_DEBT_AUDIT.md](TECHNICAL_DEBT_AUDIT.md) for details.
+### Running Tests
+
+```bash
+# All tests
+poetry run pytest
+
+# With coverage report
+poetry run pytest --cov=src/ei_cli --cov-report=html
+
+# Specific categories
+poetry run pytest tests/python/unit/        # Unit tests
+poetry run pytest tests/python/integration/ # Integration tests
+```
+
+We're actively working toward 90% coverage. See test documentation for details.
 
 ## Contributing
 
@@ -388,8 +491,7 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 ---
 
-**Status:** 🟡 Alpha - Core features working, comprehensive testing in
-progress  
-**Version:** 0.1.0  
-**Coverage:** 25.35% → Target: 90%
+**Status:** 🟡 Alpha - Core features working, plugin system stable  
+**Version:** 0.2.0  
+**Coverage:** 63.79% → Target: 90%
 ````

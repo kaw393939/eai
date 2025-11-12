@@ -12,10 +12,56 @@ and this project adheres to
 ### Planned
 
 - OpenAI Agents SDK integration for multi-agent workflows
-- Content triage system for batch processing optimization
-- Sequential tool chain orchestration
-- Cross-media pattern detection
-- Session memory for conversation context
+- Plugin marketplace and discovery
+- Workflow chain orchestration
+- Batch processing for multiple files
+- Enhanced image tools with better quality
+
+## [0.2.0] - 2025-11-11
+
+### Added
+
+- **Plugin Architecture**: Extensible command system with dynamic discovery
+  - `CommandPlugin` protocol with `@runtime_checkable` decorator
+  - `BaseCommandPlugin` abstract base class
+  - `PluginLoader` for automatic plugin discovery
+  - Support for third-party plugins via entry points (`eai.plugins`)
+- **Manual Testing**: Comprehensive end-to-end validation of all commands
+  - Generated test media (images, audio, video transcripts)
+  - Validated all 10 commands working correctly
+  - YouTube integration tested with real videos
+- **Test Coverage**: Increased from 25% to 64% (559 tests passing)
+- **Documentation**: Updated for plugin system and new architecture
+
+### Changed
+
+- **BREAKING**: Migrated all commands from hardcoded registration to plugin system
+  - Commands now loaded dynamically via `PluginLoader`
+  - `app.py` simplified from 12 imports to 3 lines of plugin loading
+  - All commands converted to plugin format with `plugin = PluginClass()` pattern
+- **Architecture**: Cleaner separation of concerns
+  - `/cli/commands/` → `/plugins/` directory structure
+  - Each command is now a self-contained plugin module
+  - Dynamic command registration replaces static imports
+
+### Removed
+
+- **crop command**: Removed due to poor reliability and quality issues
+- **remove_bg command**: Removed due to inconsistent results
+- `/cli/commands/` directory: Replaced by `/plugins/` architecture
+
+### Fixed
+
+- All test imports updated from `ei_cli.cli.commands` to `ei_cli.plugins`
+- Mock patch paths corrected for new plugin locations
+- Package installation issues with .pth file generation
+
+### Technical
+
+- 559 tests passing, 41 skipped (image streaming not implemented)
+- Full plugin system with protocol-based design
+- Entry point support for third-party extensions
+- Comprehensive manual testing completed
 
 ## [0.1.1] - 2025-11-11
 
