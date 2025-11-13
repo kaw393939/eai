@@ -6,12 +6,13 @@ from pathlib import Path
 
 import click
 
+from ei_cli import __version__
 from ei_cli.config import reload_settings
 from ei_cli.plugins.loader import PluginLoader
 
 
 @click.group()
-@click.version_option(version="0.1.1", prog_name="eai")
+@click.version_option(version=__version__, prog_name="eai")
 @click.option(
     "--config",
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
